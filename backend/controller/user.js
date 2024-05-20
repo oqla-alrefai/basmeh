@@ -1,0 +1,95 @@
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const User = require('../models/user');
+
+exports.signup = async (req, res) => {
+  try {
+    const { full_name, email, password, role } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.create({ full_name, email, password: hashedPassword, role });
+    res.status(201).json({ message: 'User created successfully', user });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+    const token = jwt.sign({ userId: user._id, role:user.role, full_name:user.full_name }, process.env.JWT_SECRET);
+    res.status(200).json({ token });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+exports.updateUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { full_name, email, password, role } = req.body;
+
+    // Check if the user is the owner of the data or an admin
+    if (req.user.userId !== userId && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'You are not authorized to update this user' });
+    }
+
+    // Hash the password if it's provided
+    let hashedPassword = password;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
+
+    // Prevent updating to admin role unless the requester is an admin
+    if (role && req.user.role !== 'admin' && role === 'admin') {
+      return res.status(403).json({ message: 'You are not authorized to update user role to admin' });
+    }
+
+    // Find the user by ID and update the data
+    const user = await User.findByIdAndUpdate(userId, { full_name, email, password: hashedPassword, role }, { new: true });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({ message: 'User updated successfully', user });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.deleteUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Check if the user is the owner of the data or an admin
+    if (req.user.userId !== userId && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'You are not authorized to delete this user' });
+    }
+
+    const deletedUser = await User.findByIdAndDelete(userId);
+
+    if (!deletedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({ message: 'User deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
