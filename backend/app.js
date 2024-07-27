@@ -3,10 +3,17 @@ const mongoose = require('mongoose');
 const authRoutes = require('./routes/userRoutes');
 const productRoutes = require("./routes/productRoutes")
 const cartRoutes = require("./routes/cart")
+const cors = require("cors");
+// const bodyParser = require('body-parser');
 require("dotenv").config()
 const app = express();
 
 app.use(express.json());
+app.use(cors())
+
+// app.use(bodyParser.json({ limit: '50mb' })); // Adjust the limit as needed
+// app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
 app.use('/auth', authRoutes);
 app.use('/product', productRoutes)
 app.use('/cart', cartRoutes); 

@@ -4,12 +4,24 @@ const User = require('../models/user');
 
 exports.signup = async (req, res) => {
   try {
-    const { full_name, email, password, role } = req.body;
+    const { full_name, email, password, phone, role } = req.body;
+
+    // Check if email already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email already in use' });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({ full_name, email, password: hashedPassword, role });
+    const user = await User.create({ full_name, email, password: hashedPassword, phone, role });
     res.status(201).json({ message: 'User created successfully', user });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    if (error.code === 11000) {
+      // Duplicate key error
+      res.status(400).json({ message: 'Email already in use' });
+    } else {
+      res.status(500).json({ error: error.message });
+    }
   }
 };
 
@@ -18,13 +30,13 @@ exports.login = async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: 'Invalid email' });
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: 'Invalid password' });
     }
-    const token = jwt.sign({ userId: user._id, role:user.role, full_name:user.full_name, email:user.email }, process.env.JWT_SECRET);
+    const token = jwt.sign({ userId: user._id, role:user.role, full_name:user.full_name, email:user.email, phone:user.phone }, process.env.JWT_SECRET);
     res.status(200).json({ token });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -33,7 +45,7 @@ exports.login = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { full_name, email, password, role } = req.body;
+    const { full_name, email, password,phone, role } = req.body;
 
     // Check if the user is the owner of the data or an admin
     if (req.user.userId !== userId && req.user.role !== 'admin') {
@@ -52,7 +64,7 @@ exports.updateUser = async (req, res) => {
     }
 
     // Find the user by ID and update the data
-    const user = await User.findByIdAndUpdate(userId, { full_name, email, password: hashedPassword, role }, { new: true });
+    const user = await User.findByIdAndUpdate(userId, { full_name, email, password: hashedPassword, phone, role }, { new: true });
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -91,5 +103,23 @@ exports.deleteUser = async (req, res) => {
     res.status(200).json({ message: 'User deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+
+exports.getUser = async (req, res) => {
+  try {
+
+    const { name } = req.params;
+    let users = await User.find({
+      $or: [
+        { name: new RegExp(name, 'i') }, // case-insensitive search for name
+        { email: new RegExp(name, 'i') } // case-insensitive search for email
+      ]
+    });
+    
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error });
   }
 };

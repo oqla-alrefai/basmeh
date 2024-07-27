@@ -1,0 +1,21 @@
+/* src/components/Navbar.css */
+.navbar {
+    display: flex;
+    align-items: center;
+    background-color: #333;
+    color: white;
+    padding: 10px;
+}
+
+.button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.heading {
+    margin: 0;
+    padding-left: 20px;
+}

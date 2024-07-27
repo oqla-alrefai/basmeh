@@ -1,0 +1,31 @@
+/* src/components/Sidebar.css */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #333;
+    color: white;
+    overflow: auto;
+    transition: transform 0.3s ease;
+  }
+  
+  .sidebar.closed {
+    transform: translateX(-250px);
+  }
+  
+  .sidebar ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .sidebar li {
+    padding: 15px;
+    text-align: center;
+  }
+  
+  .sidebar li:hover {
+    background-color: #575757;
+  }
+  
