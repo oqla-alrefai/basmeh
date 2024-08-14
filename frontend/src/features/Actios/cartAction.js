@@ -14,7 +14,7 @@ export const addItemToCart = createAsyncThunk(
         },
       };
       console.log(productId)
-      const { data } = await axios.post(`${backendURL}/add`, { productId }, config);
+      const { data } = await axios.post(`${backendURL}/add`, { productId.productId }, config);
       return data.cart;
     } catch (error) {
       if (error.response && error.response.data.message) {
