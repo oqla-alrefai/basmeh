@@ -19,6 +19,7 @@ const StoreFront = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
+    const token = localStorage.getItem("userToken");
   useEffect(() => {
     const fetchProducts = async () => {
       await dispatch(getProducts());
@@ -27,7 +28,6 @@ const StoreFront = () => {
 
     fetchProducts();
 
-    const token = localStorage.getItem("userToken");
     if (token) {
       const decodedToken = decodeToken(token);
       if (decodedToken && decodedToken.role === "admin") {
