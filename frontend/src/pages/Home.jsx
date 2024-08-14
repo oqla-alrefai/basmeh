@@ -40,9 +40,11 @@ const StoreFront = () => {
   const handleAddToCart = (productId) => {
     if(!token){
       navigate("/login")
-    }
+    }else{
     dispatch(addItemToCart({ productId }));
+    }
   };
+      
 
   const decodeToken = (token) => {
     try {
