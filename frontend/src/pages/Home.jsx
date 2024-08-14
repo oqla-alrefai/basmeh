@@ -38,6 +38,9 @@ const StoreFront = () => {
   }, [dispatch]);
 
   const handleAddToCart = (productId) => {
+    if(!token){
+      navigate("/login")
+    }
     dispatch(addItemToCart({ productId }));
   };
 
