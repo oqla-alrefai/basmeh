@@ -84,7 +84,7 @@ exports.addItemToCart = async (req, res) => {
   try {
     const userId = req.user.userId;
     const { productId } = req.body;
-    console.log(userId );
+    console.log(req.user );
     const product = await Product.findById(productId.productId);
     
     if (!product) {
