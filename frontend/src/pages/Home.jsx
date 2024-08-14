@@ -19,7 +19,7 @@ const StoreFront = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
-    const token = localStorage.getItem("userToken");
+  const token = localStorage.getItem("userToken");
   useEffect(() => {
     const fetchProducts = async () => {
       await dispatch(getProducts());
@@ -39,7 +39,8 @@ const StoreFront = () => {
 
   const handleAddToCart = (productId) => {
     if(token){
-    dispatch(addItemToCart({ productId }));
+      console.log("hi")
+      dispatch(addItemToCart({ productId }));
     }else{
       navigate("/login")
     }
