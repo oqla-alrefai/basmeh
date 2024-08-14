@@ -41,10 +41,24 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // // Check password
-    // if (!await checkPassword(password, user.password)) {
-    //   return res.status(401).json({ error: 'Invalid credentials' });
-    // }
+
+const generateToken = (user) => {
+  const payload = {
+    id: user._id,
+    email: user.email,
+    name:user.ful_name,
+    phone: user.phone,
+    role:user.role
+    // Add any other user data you want to include in the token
+  };
+
+  const secret = process.env.JWT_SECRET;
+  const options = {
+    expiresIn: '1h' // Token expires in 1 hour
+  };
+
+  return jwt.sign(payload, secret, options);
+}
 
     // Generate token
     const token = generateToken(user);
