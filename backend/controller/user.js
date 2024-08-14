@@ -12,7 +12,7 @@ exports.signup = async (req, res) => {
     if (await userExists(email)) {
       return res.status(409).json({ error: 'User already exists' });
     }
-
+    
     // Hash password
     const hashedPassword = await hashPassword(password);
 
@@ -40,7 +40,10 @@ exports.login = async (req, res) => {
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-
+    // Check password
+    if (!await bcrypt.compare(password, user.password)) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
 
 const generateToken = (user) => {
   const payload = {
