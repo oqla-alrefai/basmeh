@@ -123,7 +123,7 @@ exports.addItemToCart = async (req, res) => {
 
 exports.getCart = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId = req.user.id;
     const cart = await Cart.findOne({ user: userId, sold: false }).populate("products.product");
     if (!cart) {
       console.log("Cart not found");
