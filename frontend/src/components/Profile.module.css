@@ -1,0 +1,148 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+  }
+  
+  .card {
+    max-width: 400px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+  }
+  
+  .avatarContainer {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+  }
+  
+  .cardContent {
+    text-align: center;
+  }
+  
+  .userName {
+    font-size: 24px;
+    margin-bottom: 5px;
+  }
+  
+  .userRole {
+    color: #555555;
+    margin-bottom: 15px;
+  }
+  
+  .divider {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 15px 0;
+  }
+  
+  .userInfo {
+    margin-bottom: 10px;
+  }
+  
+  .buttonContainer {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .editButton, .logoutButton, .homeButton {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+  }
+  
+  .editButton {
+    background-color: #FFD700;
+    color: #000000;
+  }
+  
+  .logoutButton {
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #000000;
+  }
+  
+  .homeButton {
+    background-color: #FFD700;
+    color: #000000;
+    text-decoration: none;
+    display: inline-block;
+  }
+  
+  .editButton:hover, .homeButton:hover {
+    background-color: #FFC700;
+  }
+  
+  .logoutButton:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modalContent {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+  }
+  
+  .modalContent h2 {
+    margin-bottom: 15px;
+  }
+  
+  .modalContent input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+  }
+  
+  .modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+  }
+  
+  .modalActions button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .modalActions button:first-child {
+    background-color: #f0f0f0;
+  }
+  
+  .modalActions button:last-child {
+    background-color: #FFD700;
+    color: #000000;
+  }

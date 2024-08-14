@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Carousel } from 'react-responsive-carousel';
-import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 import {
   getProducts,
   deleteProduct,
@@ -9,28 +9,9 @@ import {
   addDiscount,
   removeDiscount,
 } from "../features/Actios/productActions";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import ModeEditOutlineIcon from "@mui/icons-material/ModeEditOutline";
-import {
-  Box,
-  Typography,
-  Paper,
-  TextField,
-  Card,
-  CardContent,
-  CardActions,
-  Grid,
-  IconButton,
-  Avatar,
-  styled,
-  Button,
-  CircularProgress,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-} from "@mui/material";
-import { Buffer } from 'buffer';
+import { Buffer } from "buffer";
+import styles from "./Products.module.css";
+import CreateProduct from "./CreateProduct";
 
 const Products = () => {
   const dispatch = useDispatch();
@@ -47,6 +28,7 @@ const Products = () => {
     endTime: "",
     productId: "",
   });
+  const [showCreateProductPopup, setShowCreateProductPopup] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -67,9 +49,9 @@ const Products = () => {
           });
         }
       });
-    }, 60000); // Check every minute
+    }, 60000);
 
-    return () => clearInterval(interval); // Cleanup interval on component unmount
+    return () => clearInterval(interval);
   }, [dispatch, products]);
 
   const handleSearchChange = (event) => {
@@ -82,17 +64,10 @@ const Products = () => {
       product.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const CardContainer = styled(Card)({
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
-  });
-
   const handleEditClick = (product) => {
     setEditableProduct({ ...product });
     setOpenEditDialog(true);
-    activeField.current = 'name';
+    activeField.current = "name";
   };
 
   const handleEditChange = (e) => {
@@ -111,10 +86,9 @@ const Products = () => {
   };
 
   const handleUpdateProduct = () => {
-    // Exclude images from editableProduct
     const { images, ...productData } = editableProduct;
     dispatch(updateProduct(productData)).then(() => {
-      dispatch(getProducts()); // Refetch products after updating
+      dispatch(getProducts());
     });
     setEditableProduct(null);
     setOpenEditDialog(false);
@@ -123,291 +97,245 @@ const Products = () => {
 
   const handleAddDiscount = () => {
     const { productId, percentage, startTime, endTime } = discountParams;
-    dispatch(addDiscount({ productId, percentage, startTime, endTime })).then(() => {
-      dispatch(getProducts()); // Refetch products after adding discount
-    });
+    dispatch(addDiscount({ productId, percentage, startTime, endTime })).then(
+      () => {
+        dispatch(getProducts());
+      }
+    );
     setDiscountParams({
       percentage: 0,
       startTime: "",
       endTime: "",
       productId: "",
     });
-    setOpenEditDialog(false); // Close the dialog after adding discount
+    setOpenEditDialog(false);
   };
 
   const handleRemoveDiscount = (productId) => {
     dispatch(removeDiscount(productId)).then(() => {
-      dispatch(getProducts()); // Refetch products after removing discount
+      dispatch(getProducts());
     });
   };
 
   useEffect(() => {
-    if (editableProduct && activeField.current && inputRefs.current[activeField.current]) {
+    if (
+      editableProduct &&
+      activeField.current &&
+      inputRefs.current[activeField.current]
+    ) {
       inputRefs.current[activeField.current].focus();
     }
   }, [editableProduct]);
 
   return (
-    <Paper>
-      <Typography variant="h5" gutterBottom padding={2}>
-        Products
-      </Typography>
-      <Box padding={2}>
-        <TextField
-          label="Search Products"
-          variant="outlined"
-          fullWidth
+    <div className={styles.paper}>
+      <h2 className={styles.title}>Products</h2>
+      <div className={styles.searchContainer}>
+        <input
+          type="text"
+          placeholder="Search Products"
           value={searchQuery}
           onChange={handleSearchChange}
+          className={styles.searchInput}
         />
-      </Box>
-      <Box padding={2}>
-        <Grid container spacing={2}>
-          {loading ? (
-            <CircularProgress />
-          ) : (
-            filteredProducts.map((product) => (
-              <Grid item xs={12} sm={6} md={4} key={product._id}>
-                <CardContainer>
-                  <CardContent>
-                    <Carousel showThumbs={false} showStatus={false} infiniteLoop>
-                      {product.images.map((image, index) => (
-                        <div key={index}>
-                          <img
-                            src={`data:${image.contentType};base64,${Buffer.from(image.data).toString('base64')}`}
-                            alt={product.name}
-                            style={{ width: '100%', height: '300px' }}
-                          />
-                        </div>
-                      ))}
-                    </Carousel>
-                    {editableProduct && editableProduct._id === product._id ? (
-                      <>
-                        <TextField
-                          name="name"
-                          label="Name"
-                          fullWidth
-                          value={editableProduct.name}
-                          onChange={handleEditChange}
-                          inputRef={(el) => (inputRefs.current.name = el)}
-                          sx={{ mb: 2 }}
-                        />
-                        <TextField
-                          name="price"
-                          label="Price"
-                          fullWidth
-                          value={editableProduct.price}
-                          onChange={handleEditChange}
-                          inputRef={(el) => (inputRefs.current.price = el)}
-                          sx={{ mb: 2 }}
-                        />
-                        <TextField
-                          name="description"
-                          label="Description"
-                          fullWidth
-                          value={editableProduct.description}
-                          onChange={handleEditChange}
-                          inputRef={(el) => (inputRefs.current.description = el)}
-                          sx={{ mb: 2 }}
-                        />
-                      </>
-                    ) : (
-                      <>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginBottom: 3,
-                          }}
-                        >
-                          <Avatar sx={{ marginRight: 2 }}>
-                            {product.name.charAt(0).toUpperCase()}
-                          </Avatar>
-                          <Typography variant="h6" component="div">
-                            {product.name}
-                          </Typography>
-                        </Box>
-                        <Typography
-                          sx={{
-                            display: "flex",
-                            justifyContent: "start",
-                            alignItems: "center",
-                            marginBottom: 1,
-                          }}
-                          color="text.secondary"
-                        >
-                          {product.price} $
-                        </Typography>
-                        <Typography
-                          color="text.secondary"
-                          sx={{
-                            display: "flex",
-                            justifyContent: "start",
-                            alignItems: "center",
-                            marginBottom: 1,
-                          }}
-                        >
-                          {product.description}
-                        </Typography>
-                      </>
-                    )}
-                  </CardContent>
-                  <CardActions
-                    sx={{ display: "flex", justifyContent: "space-between" }}
+      </div>
+      <div className={styles.createProductContainer}>
+        <button
+          onClick={() => setShowCreateProductPopup(true)}
+          className={styles.createProductButton}
+        >
+          Create Product
+        </button>
+      </div>
+      <div className={styles.productsGrid}>
+        {loading ? (
+          <div className={styles.spinner}></div>
+        ) : (
+          filteredProducts.map((product) => (
+            <div key={product._id} className={styles.productCard}>
+              <Carousel showThumbs={false} showStatus={false} infiniteLoop>
+                {product.images.map((image, index) => (
+                  <div key={index}>
+                    <img
+                      src={`data:${image.contentType};base64,${Buffer.from(
+                        image.data
+                      ).toString("base64")}`}
+                      alt={product.name}
+                      className={styles.productImage}
+                    />
+                  </div>
+                ))}
+              </Carousel>
+              <div className={styles.productContent}>
+                <div className={styles.productHeader}>
+                  <div className={styles.avatar}>
+                    {product.name.charAt(0).toUpperCase()}
+                  </div>
+                  <h3>{product.name}</h3>
+                </div>
+                <p className={styles.productPrice}>{product.price} $</p>
+                <p className={styles.productDescription}>
+                  {product.description}
+                </p>
+              </div>
+              <div className={styles.productActions}>
+                <button
+                  onClick={() => handleEditClick(product)}
+                  className={styles.editButton}
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => dispatch(deleteProduct(product._id))}
+                  className={styles.deleteButton}
+                >
+                  Delete
+                </button>
+                {product.discount ? (
+                  <button
+                    onClick={() => handleRemoveDiscount(product._id)}
+                    className={styles.removeDiscountButton}
                   >
-                    {editableProduct && editableProduct._id === product._id ? (
-                      <>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={handleUpdateProduct}
-                        >
-                          Save
-                        </Button>
-                        <Button
-                          variant="outlined"
-                          color="secondary"
-                          onClick={handleCancelEdit}
-                        >
-                          Cancel
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        <IconButton
-                          onClick={() => handleEditClick(product)}
-                          aria-label="edit"
-                          color="success"
-                        >
-                          <ModeEditOutlineIcon />
-                        </IconButton>
-                        <IconButton
-                          onClick={() => {
-                            dispatch(deleteProduct(product._id));
-                          }}
-                          aria-label="delete"
-                          color="error"
-                        >
-                          <DeleteOutlineIcon />
-                        </IconButton>
-                      </>
-                    )}
-                    {/* Display add/remove discount buttons */}
-                    {product.discount ? (
-                      <Button
-                        variant="outlined"
-                        color="secondary"
-                        onClick={() => handleRemoveDiscount(product._id)}
-                      >
-                        Remove Discount
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => {
-                          setDiscountParams({ ...discountParams, productId: product._id });
-                          setOpenEditDialog(true);
-                        }}
-                      >
-                        Add Discount
-                      </Button>
-                    )}
-                  </CardActions>
-                </CardContainer>
-              </Grid>
-            ))
-          )}
-        </Grid>
-      </Box>
-      {/* Edit Product or Add Discount Dialog */}
-      <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
-        <DialogTitle>{discountParams.productId ? "Add Discount" : "Edit Product"}</DialogTitle>
-        <DialogContent>
-          {discountParams.productId ? (
-            <>
-              <TextField
-                name="percentage"
-                label="Discount Percentage"
-                fullWidth
-                type="number"
-                value={discountParams.percentage}
-                onChange={(e) => setDiscountParams({ ...discountParams, percentage: e.target.value })}
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                name="startTime"
-                label="Start Time"
-                fullWidth
-                type="datetime-local"
-                value={discountParams.startTime}
-                onChange={(e) => setDiscountParams({ ...discountParams, startTime: e.target.value })}
-                sx={{ mb: 2 }}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-              <TextField
-                name="endTime"
-                label="End Time"
-                fullWidth
-                type="datetime-local"
-                value={discountParams.endTime}
-                onChange={(e) => setDiscountParams({ ...discountParams, endTime: e.target.value })}
-                sx={{ mb: 2 }}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-            </>
-          ) : (
-            <>
-              <TextField
-                name="name"
-                label="Name"
-                fullWidth
-                value={editableProduct?.name || ""}
-                onChange={handleEditChange}
-                inputRef={(el) => (inputRefs.current.name = el)}
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                name="price"
-                label="Price"
-                fullWidth
-                value={editableProduct?.price || ""}
-                onChange={handleEditChange}
-                inputRef={(el) => (inputRefs.current.price = el)}
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                name="description"
-                label="Description"
-                fullWidth
-                value={editableProduct?.description || ""}
-                onChange={handleEditChange}
-                inputRef={(el) => (inputRefs.current.description = el)}
-                sx={{ mb: 2 }}
-              />
-            </>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenEditDialog(false)} color="secondary">
-            Cancel
-          </Button>
-          {discountParams.productId ? (
-            <Button onClick={handleAddDiscount} color="primary">
-              Add Discount
-            </Button>
-          ) : (
-            <Button onClick={handleUpdateProduct} color="primary">
-              Save
-            </Button>
-          )}
-        </DialogActions>
-      </Dialog>
-    </Paper>
+                    Remove Discount
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setDiscountParams({
+                        ...discountParams,
+                        productId: product._id,
+                      });
+                      setOpenEditDialog(true);
+                    }}
+                    className={styles.addDiscountButton}
+                  >
+                    Add Discount
+                  </button>
+                )}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+      {openEditDialog && (
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
+            <h2>
+              {discountParams.productId ? "Add Discount" : "Edit Product"}
+            </h2>
+            {discountParams.productId ? (
+              <>
+                <input
+                  type="number"
+                  placeholder="Discount Percentage"
+                  value={discountParams.percentage}
+                  onChange={(e) =>
+                    setDiscountParams({
+                      ...discountParams,
+                      percentage: e.target.value,
+                    })
+                  }
+                  className={styles.inputField}
+                />
+                <input
+                  type="datetime-local"
+                  value={discountParams.startTime}
+                  onChange={(e) =>
+                    setDiscountParams({
+                      ...discountParams,
+                      startTime: e.target.value,
+                    })
+                  }
+                  className={styles.inputField}
+                />
+                <input
+                  type="datetime-local"
+                  value={discountParams.endTime}
+                  onChange={(e) =>
+                    setDiscountParams({
+                      ...discountParams,
+                      endTime: e.target.value,
+                    })
+                  }
+                  className={styles.inputField}
+                />
+              </>
+            ) : (
+              <>
+                <input
+                  type="text"
+                  placeholder="Name"
+                  value={editableProduct?.name || ""}
+                  onChange={handleEditChange}
+                  name="name"
+                  ref={(el) => (inputRefs.current.name = el)}
+                  className={styles.inputField}
+                />
+                <input
+                  type="number"
+                  placeholder="Price"
+                  value={editableProduct?.price || ""}
+                  onChange={handleEditChange}
+                  name="price"
+                  ref={(el) => (inputRefs.current.price = el)}
+                  className={styles.inputField}
+                />
+                <textarea
+                  placeholder="Description"
+                  value={editableProduct?.description || ""}
+                  onChange={handleEditChange}
+                  name="description"
+                  ref={(el) => (inputRefs.current.description = el)}
+                  className={styles.inputField}
+                />
+              </>
+            )}
+            <div className={styles.modalActions}>
+              <button
+                onClick={() => setOpenEditDialog(false)}
+                className={styles.cancelButton}
+              >
+                Cancel
+              </button>
+              {discountParams.productId ? (
+                <button
+                  onClick={handleAddDiscount}
+                  className={styles.saveButton}
+                >
+                  Add Discount
+                </button>
+              ) : (
+                <button
+                  onClick={handleUpdateProduct}
+                  className={styles.saveButton}
+                >
+                  Save
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+      {showCreateProductPopup && (
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
+            <button
+              onClick={() => setShowCreateProductPopup(false)}
+              className={styles.closeButton}
+            >
+              &times;
+            </button>
+            <h2 className={styles.formTitle}>Create New Product</h2>
+            <CreateProduct
+              onProductCreated={() => {
+                setShowCreateProductPopup(false);
+                dispatch(getProducts());
+              }}
+            />
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Box, CircularProgress, Typography, List, ListItem, ListItemText, ListItemAvatar, Avatar, Divider } from '@mui/material';
+import styles from './AdminAllCarts.module.css';
 
 const AdminAllCarts = () => {
   const [carts, setCarts] = useState([]);
@@ -10,7 +10,7 @@ const AdminAllCarts = () => {
   useEffect(() => {
     const fetchAllCarts = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/cart/allcarts', {
+        const response = await axios.get('https://basmeh-25qp.onrender.com/cart/allcarts', {
           headers: { Authorization: `Bearer ${localStorage.getItem('userToken')}` }
         });
         setCarts(response.data.carts);
@@ -24,38 +24,38 @@ const AdminAllCarts = () => {
     fetchAllCarts();
   }, []);
 
-  if (loading) return <Box display="flex" justifyContent="center" alignItems="center" height="100vh"><CircularProgress /></Box>;
-  if (error) return <Box display="flex" justifyContent="center" alignItems="center" height="100vh"><Typography color="error">{error}</Typography></Box>;
+  if (loading) return <div className={styles.loadingContainer}><div className={styles.spinner}></div></div>;
+  if (error) return <div className={styles.errorContainer}><p className={styles.error}>{error}</p></div>;
 
   return (
-    <Box p={3}>
-      <Typography variant="h4" gutterBottom>All Carts</Typography>
+    <div className={styles.container}>
+      <h1 className={styles.title}>All Carts</h1>
       {carts.length > 0 ? (
         carts.map(cart => (
-          <Box key={cart._id} mb={3}>
-            <Typography variant="h6">User: {cart.user}</Typography>
-            <List>
+          <div key={cart._id} className={styles.cartContainer}>
+            <h2 className={styles.userTitle}>User: {cart.user}</h2>
+            <ul className={styles.productList}>
               {cart.products.map(item => (
-                <ListItem key={item.product._id} alignItems="flex-start">
-                  <ListItemAvatar>
-                    <Avatar src={item.product.image} alt={item.product.name} variant="square" />
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={item.product.name}
-                    secondary={`${item.quantity} x $${item.product.price}`}
-                  />
-                  <Typography variant="body2">${item.product.price * item.quantity}</Typography>
-                </ListItem>
+                <li key={item.product._id} className={styles.productItem}>
+                  <div className={styles.productImageContainer}>
+                    <img src={item.product.image} alt={item.product.name} className={styles.productImage} />
+                  </div>
+                  <div className={styles.productInfo}>
+                    <p className={styles.productName}>{item.product.name}</p>
+                    <p className={styles.productQuantity}>{item.quantity} x ${item.product.price}</p>
+                  </div>
+                  <p className={styles.productTotal}>${item.product.price * item.quantity}</p>
+                </li>
               ))}
-            </List>
-            <Typography variant="h6">Total Price: ${cart.totalPrice}</Typography>
-            <Divider />
-          </Box>
+            </ul>
+            <h3 className={styles.totalPrice}>Total Price: ${cart.totalPrice}</h3>
+            <hr className={styles.divider} />
+          </div>
         ))
       ) : (
-        <Typography>No carts found</Typography>
+        <p className={styles.noCartsMessage}>No carts found</p>
       )}
-    </Box>
+    </div>
   );
 };
 

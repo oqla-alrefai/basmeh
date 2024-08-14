@@ -1,52 +1,40 @@
 import React from "react";
 import { Link, NavLink, Outlet } from "react-router-dom";
-import { CssBaseline, Box, AppBar, Toolbar, Typography } from "@mui/material";
+import styles from "./AdminPage.module.css";
 
 const AdminPage = () => {
   return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-      <AppBar
-        position="fixed"
-        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-      >
-        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography variant="h6" noWrap>
-            Admin Dashboard
-          </Typography>
-          <Toolbar
-            sx={{
-              width: "20rem",
-              display: "flex",
-              justifyContent: "space-evenly",
-            }}
-          >
+    <div className={styles.container}>
+      <header className={styles.header}>
+        <div className={styles.headerContent}>
+          <h1 className={styles.title}>Admin Dashboard</h1>
+          <nav className={styles.nav}>
             <NavLink
               to="/admin/products"
-              style={{ textDecoration: "none", color: "inherit" }}
+              className={({ isActive }) => isActive ? styles.activeLink : styles.link}
             >
               Products
             </NavLink>
             <NavLink
               to="/admin/carts"
-              style={{ textDecoration: "none", color: "inherit" }}
+              className={({ isActive }) => isActive ? styles.activeLink : styles.link}
             >
               Carts
             </NavLink>
             <NavLink
               to="/admin/users"
-              style={{ textDecoration: "none", color: "inherit" }}
+              className={({ isActive }) => isActive ? styles.activeLink : styles.link}
             >
               Users
             </NavLink>
-            <Link to="/">Home</Link>
-          </Toolbar>
-        </Toolbar>
-      </AppBar>
-      <Box component="main" sx={{ flexGrow: 1, p: 3, marginTop: "64px" }}>
+            <Link to="/" className={styles.link}>Home</Link>
+          </nav>
+        </div>
+      </header>
+      <main className={styles.main}>
         <Outlet />
-      </Box>
-    </Box>
+      </main>
+    </div>
   );
 };
 

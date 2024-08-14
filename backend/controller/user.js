@@ -4,42 +4,61 @@ const User = require('../models/user');
 
 exports.signup = async (req, res) => {
   try {
-    const { full_name, email, password, phone, role } = req.body;
-
-    // Check if email already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'Email already in use' });
+    const { email, password, full_name, phone } = req.body;
+    
+    // Validate input
+    if (!validateInput(email, password, full_name, phone)) {
+      return res.status(400).json({ error: 'Invalid input' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({ full_name, email, password: hashedPassword, phone, role });
-    res.status(201).json({ message: 'User created successfully', user });
+    // Check if user already exists
+    if (await userExists(email)) {
+      return res.status(409).json({ error: 'User already exists' });
+    }
+
+    // Hash password
+    const hashedPassword = await hashPassword(password);
+
+    // Create user
+    const user = await createUser(email, hashedPassword, full_name, phone);
+
+    // Generate token
+    const token = generateToken(user);
+
+    res.status(201).json({ user, token });
   } catch (error) {
-    if (error.code === 11000) {
-      // Duplicate key error
-      res.status(400).json({ message: 'Email already in use' });
-    } else {
-      res.status(500).json({ error: error.message });
-    }
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
   }
 };
 
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
+
+    // Validate input
+    if (!validateInput(email, password)) {
+      return res.status(400).json({ error: 'Invalid input' });
+    }
+
+    // Find user
+    const user = await findUserByEmail(email);
     if (!user) {
-      return res.status(401).json({ message: 'Invalid email' });
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid password' });
+
+    // Check password
+    if (!await checkPassword(password, user.password)) {
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
-    const token = jwt.sign({ userId: user._id, role:user.role, full_name:user.full_name, email:user.email, phone:user.phone }, process.env.JWT_SECRET);
-    res.status(200).json({ token });
+
+    // Generate token
+    const token = generateToken(user);
+
+    res.json({ user, token });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
   }
 };
 exports.updateUser = async (req, res) => {

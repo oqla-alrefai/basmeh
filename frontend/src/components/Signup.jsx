@@ -2,23 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { registerUser } from '../features/Actios/authActions';
 import { Link, useNavigate } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { Container, TextField, Button, Typography, CircularProgress, Alert } from '@mui/material';
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#FFD700',
-    },
-    secondary: {
-      main: '#FFFFFF',
-    },
-    text: {
-      primary: '#000000',
-      secondary: '#555555',
-    },
-  },
-});
+import styles from './Signup.module.css';
 
 const Signup = () => {
   const [email, setEmail] = useState('');
@@ -41,73 +25,55 @@ const Signup = () => {
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <Container maxWidth="sm" style={{ marginTop: '2rem' }}>
-        <Typography variant="h4" component="h2" gutterBottom>
+    <div className={styles.container}>
+      <div className={styles.header}>Signup</div>
+      <form onSubmit={handleSubmit}>
+        <input
+          className={styles.formField}
+          placeholder="Email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          className={styles.formField}
+          placeholder="Password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <input
+          className={styles.formField}
+          placeholder="Phone"
+          type="tel"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          required
+        />
+        <input
+          className={styles.formField}
+          placeholder="Full Name"
+          type="text"
+          value={full_name}
+          onChange={(e) => setFull_name(e.target.value)}
+          required
+        />
+        <button
+          type="submit"
+          className={styles.submitButton}
+          disabled={loading}
+        >
+          {loading && <span className={styles.spinner}>Loading...</span>}
           Signup
-        </Typography>
-        <form onSubmit={handleSubmit}>
-          <TextField
-            label="Email"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <TextField
-            label="Password"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <TextField
-            label="Phone"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            required
-          />
-          <TextField
-            label="Full Name"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            type="text"
-            value={full_name}
-            onChange={(e) => setFull_name(e.target.value)}
-            required
-          />
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            disabled={loading}
-            style={{ marginTop: '1rem' }}
-          >
-            {loading ? <CircularProgress size={24} /> : 'Signup'}
-          </Button>
-        </form>
-        {error && (
-          <Alert severity="error" style={{ marginTop: '1rem' }}>
-            {error}
-          </Alert>
-        )}
-        <Typography style={{ marginTop: '1rem' }}>
-        Already have an account? <Link style={{textDecoration:"none", color:"#FFD700"}} to="/login">Login</Link> 
-      </Typography>
-      </Container>
-    </ThemeProvider>
+        </button>
+      </form>
+      {error && <div className={styles.error}>{error}</div>}
+      <div className={styles.linkWrapper}>
+        Already have an account? <Link className={styles.link} to="/login">Login</Link>
+      </div>
+    </div>
   );
 };
 

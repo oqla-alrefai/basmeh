@@ -10,12 +10,13 @@ import Admin from "./pages/Admin";
 import Users from "./components/users";
 import Products from "./components/Products";
 import Carts from "./components/Carts";
-import Product from "./components/test/Product";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import CartPage from "./components/Cart";
 import CreateProduct from "./components/CreateProduct";
-import NotFound from "./pages/NotFound"; // Import the 404 page component
+import NotFound from "./pages/NotFound";
+import HomePage from "./pages/Home";
+
 
 const routes = createBrowserRouter([
 
@@ -39,7 +40,7 @@ const routes = createBrowserRouter([
   },
   {
     path: "/",
-    element: <Product />,
+    element: <HomePage />,
   },
   {
     path:"/login",
@@ -62,8 +63,12 @@ const routes = createBrowserRouter([
     element: <CreateProduct/>
   },
   {
-    path: "*", // This is the catch-all route
-    element: <NotFound />, // Render the 404 page component
+    path:"/home",
+    element:<HomePage/>
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);
 

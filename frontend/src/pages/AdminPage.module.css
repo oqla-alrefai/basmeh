@@ -1,0 +1,54 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #1976d2;
+    color: white;
+    z-index: 1000;
+  }
+  
+  .headerContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    height: 64px;
+  }
+  
+  .title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin: 0;
+  }
+  
+  .nav {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .link {
+    color: white;
+    text-decoration: none;
+    padding: 5px 10px;
+  }
+  
+  .activeLink {
+    color: white;
+    text-decoration: none;
+    padding: 5px 10px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+  }
+  
+  .main {
+    flex-grow: 1;
+    padding: 20px;
+    margin-top: 64px;
+  }
