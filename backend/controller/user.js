@@ -6,10 +6,7 @@ exports.signup = async (req, res) => {
   try {
     const { email, password, full_name, phone } = req.body;
     
-    // Validate input
-    if (!validateInput(email, password, full_name, phone)) {
-      return res.status(400).json({ error: 'Invalid input' });
-    }
+
 
     // Check if user already exists
     if (await userExists(email)) {
@@ -36,10 +33,7 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Validate input
-    if (!validateInput(email, password)) {
-      return res.status(400).json({ error: 'Invalid input' });
-    }
+
 
     // Find user
     const user = await findUserByEmail(email);
