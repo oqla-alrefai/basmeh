@@ -13,6 +13,7 @@ export const addItemToCart = createAsyncThunk(
           Authorization: `Bearer ${localStorage.getItem("userToken")}`,
         },
       };
+      console.log(productId)
       const { data } = await axios.post(`${backendURL}/add`, { productId }, config);
       return data.cart;
     } catch (error) {
