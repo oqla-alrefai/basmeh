@@ -17,12 +17,12 @@ exports.signup = async (req, res) => {
     const hashedPassword = await hashPassword(password);
 
     // Create user
-    const user = await User.createUser(email, hashedPassword, full_name, phone);
+    const user = new User({email, hashedPassword, full_name, phone});
+    const {password, ...data} = user._doc
+    await user.save()
 
-    // Generate token
-    const token = generateToken(user);
 
-    res.status(201).json({ user, token });
+    res.status(201).json({ data, message: "user has been registered successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Server error' });
