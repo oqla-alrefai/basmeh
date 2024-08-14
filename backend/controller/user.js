@@ -17,7 +17,7 @@ exports.signup = async (req, res) => {
     const hashedPassword = await hashPassword(password);
 
     // Create user
-    const user = await createUser(email, hashedPassword, full_name, phone);
+    const user = await User.createUser(email, hashedPassword, full_name, phone);
 
     // Generate token
     const token = generateToken(user);
@@ -36,7 +36,7 @@ exports.login = async (req, res) => {
 
 
     // Find user
-    const user = await findUserByEmail(email);
+    const user = await User.findUserByEmail(email);
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
