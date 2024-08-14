@@ -5,23 +5,26 @@ const User = require('../models/user');
 exports.signup = async (req, res) => {
   try {
     const { email, password, full_name, phone } = req.body;
-    
 
-
-    // Check if user already exists
-    if (await userExists(email)) {
-      return res.status(409).json({ error: 'User already exists' });
+    // Check if the email already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ error: 'Email already registered' });
     }
-    
+
     // Hash password
     const hashedPassword = await hashPassword(password);
 
     // Create user
-    const user = new User({email, hashedPassword, full_name, phone});
-    await user.save()
+    const user = new User({
+      email, 
+      password: hashedPassword, // Save the hashed password
+      full_name, 
+      phone
+    });
+    await user.save();
 
-
-    res.status(201).json({message: "user has been registered successfully" });
+    res.status(201).json({ message: "User has been registered successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Server error' });
