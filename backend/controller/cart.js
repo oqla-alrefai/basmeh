@@ -5,7 +5,7 @@ require('dotenv').config();
 
 exports.removeItemFromCart = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId = req.user.id;
     const { productId } = req.body;
 
     const cart = await Cart.findOne({ user: userId, sold: false }).populate("products.product");
