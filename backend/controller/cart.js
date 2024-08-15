@@ -90,7 +90,7 @@ exports.addItemToCart = async (req, res) => {
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
-
+    console.log(`0 ${productId} ${userId}`)
     const currentTime = new Date();
     let productPrice = product.price;
     if (product.discount && currentTime >= product.discount.startTime && currentTime <= product.discount.endTime) {
