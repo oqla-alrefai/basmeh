@@ -60,7 +60,7 @@
 }
 
 .quantityControl button {
-  background-color: #007bff;
+  background-color: #FFD700;
   color: #fff;
   border: none;
   padding: 5px 10px;
@@ -93,7 +93,7 @@
 }
 
 .checkoutButton {
-  background-color: #28a745;
+  background-color: #FFD700;
   color: #fff;
   border: none;
   padding: 10px 20px;
@@ -104,7 +104,7 @@
 }
 
 .checkoutButton:hover {
-  background-color: #218838;
+  background-color: #FFD700;
 }
 
 .loading, .error, .empty {
