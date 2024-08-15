@@ -40,7 +40,7 @@ const StoreFront = () => {
   const handleAddToCart = (productId) => {
     if(token){
       console.log("hi")
-      dispatch(addItemToCart({ productId }));
+      dispatch(addItemToCart(productId));
     }else{
       navigate("/login")
     }
