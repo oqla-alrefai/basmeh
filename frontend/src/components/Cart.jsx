@@ -4,6 +4,7 @@ import styles from './UserCart.module.css';
 import { useDispatch } from 'react-redux';
 import { addItemToCart, removeItemFromCart, checkout } from '../features/Actios/cartAction';
 import { Link, useNavigate } from 'react-router-dom';
+import { Buffer } from "buffer";
 
 const UserCart = () => {
   const [cart, setCart] = useState(null);
