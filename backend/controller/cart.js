@@ -52,7 +52,7 @@ exports.removeItemFromCart = async (req, res) => {
 
 exports.checkout = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId = req.user.id;
 
     const cart = await Cart.findOne({ user: userId, sold: false }).populate('products.product');
     if (!cart) {
@@ -82,7 +82,7 @@ exports.checkout = async (req, res) => {
 
 exports.addItemToCart = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId = req.user.id;
     const { productId } = req.body;
     console.log(req.user );
     const product = await Product.findById(productId);
