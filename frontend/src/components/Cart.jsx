@@ -81,7 +81,9 @@ const UserCart = () => {
           <div key={item.product._id} className={styles.cartItem}>
             <img
               src={item.product.images && item.product.images.length > 0 
-                ? bufferToBase64(item.product.images[0]) 
+                ? {`data:${item.product.image[0].contentType};base64,${Buffer.from(
+                            image.data
+                          ).toString("base64")}`} 
                 : '/path/to/default/image.jpg'}
               alt={item.product.name}
               className={styles.productImage}
