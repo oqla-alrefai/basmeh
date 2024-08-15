@@ -96,24 +96,25 @@ exports.addItemToCart = async (req, res) => {
     if (product.discount && currentTime >= product.discount.startTime && currentTime <= product.discount.endTime) {
       productPrice = product.price * (1 - product.discount.percentage / 100);
     }
-
+    console.log(`${productId} ${userId}`)
     let cart = await Cart.findOne({ user: userId, sold: false }).populate("products.product");
     if (!cart) {
       // Create a new cart if it doesn't exist
       cart = new Cart({ user: userId, products: [] });
     }
+    console.log(`1. ${productId} ${userId}`)
 
-    const productIndex = cart.products.findIndex(item => item.product._id.toString() === productId.productId);
+    const productIndex = cart.products.findIndex(item => item.product._id.toString() === productId);
     if (productIndex > -1) {
       // Product exists in cart, increase quantity
       cart.products[productIndex].quantity += 1;
       cart.totalPrice += productPrice;
     } else {
       // Product does not exist in cart, add new product with quantity = 1
-      cart.products.push({ product: productId.productId, quantity: 1 });
+      cart.products.push({ product: productId, quantity: 1 });
       cart.totalPrice += productPrice;
     }
-
+    console.log(`2. ${productId} ${userId}`)
     await cart.save();
     res.status(200).json({ message: "Product added to cart", cart });
   } catch (error) {
