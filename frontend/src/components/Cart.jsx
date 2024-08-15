@@ -58,45 +58,40 @@ const UserCart = () => {
     navigate("/");
   }
 
-  if (loading) return <div className={styles.loadingContainer}><div>Loading...</div></div>;
-  if (error) return <div className={styles.errorContainer}><div>Your Cart Is Empty <Link to="/">🛒</Link></div></div>;
+  if (loading) return <div className={styles.loading}>Loading...</div>;
+  if (error) return <div className={styles.error}>Error: {error}</div>;
+  if (!cart || cart.products.length === 0) return <div className={styles.empty}>Your Cart Is Empty 🛒</div>;
 
   return (
-    <div className={styles.container}>
-      <div className={styles.cartTitle}>Your Cart</div>
-      {cart ? (
-        <ul className={styles.cartList}>
-          {cart.products.map(item => (
-            <li key={item.product._id} className={styles.cartListItem}>
-              <img 
-                src={item.product.images && item.product.images.length > 0 ? item.product.images[0] : '/path/to/default/image.jpg'} 
-                alt={item.product.name} 
-                className={styles.avatar}
-              />
-              <div className={styles.itemDetails}>
-                <div>{item.product.name}</div>
-                <div>
-                  ${item.product.price} x {item.quantity}
-                </div>
-                <div className={styles.itemPrice}>
-                  <button onClick={() => handleDecreaseQuantity(item.product._id)}> - </button>
-                  <span className={styles.itemQuantity}>{item.quantity}</span>
-                  <button onClick={() => handleQuantityChange(item.product._id)}> + </button>
-                </div>
-              </div>
-              <div>${item.product.price * item.quantity}</div>
-            </li>
-          ))}
-          <div className={styles.totalContainer}>
-            <div className={styles.totalPrice}>Total Price: ${cart.totalPrice}</div>
-            <button className={styles.checkoutButton} onClick={() => handleCheckout()}>
-              Checkout
-            </button>
+    <div className={styles.cartContainer}>
+      <h2 className={styles.cartTitle}>Your Cart</h2>
+      <div className={styles.cartItems}>
+        {cart.products.map(item => (
+          <div key={item.product._id} className={styles.cartItem}>
+            <img
+              src={item.product.images && item.product.images.length > 0 ? item.product.images[0] : '/path/to/default/image.jpg'}
+              alt={item.product.name}
+              className={styles.productImage}
+            />
+            <div className={styles.productInfo}>
+              <h3 className={styles.productName}>{item.product.name}</h3>
+              <p className={styles.productPrice}>${item.product.price}</p>
+            </div>
+            <div className={styles.quantityControl}>
+              <button onClick={() => handleDecreaseQuantity(item.product._id)}>-</button>
+              <span>{item.quantity}</span>
+              <button onClick={() => handleQuantityChange(item.product._id)}>+</button>
+            </div>
+            <p className={styles.itemTotal}>${item.product.price * item.quantity}</p>
           </div>
-        </ul>
-      ) : (
-        <div>Your cart is empty</div>
-      )}
+        ))}
+      </div>
+      <div className={styles.cartSummary}>
+        <p className={styles.totalPrice}>Total Price: ${cart.totalPrice}</p>
+        <button className={styles.checkoutButton} onClick={handleCheckout}>
+          Checkout
+        </button>
+      </div>
     </div>
   );
 };
