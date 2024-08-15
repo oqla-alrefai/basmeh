@@ -58,6 +58,17 @@ const UserCart = () => {
     navigate("/");
   }
 
+    // Function to convert buffer to base64
+  const bufferToBase64 = (buffer) => {
+    if (!buffer || !buffer.data) return '';
+    let binary = '';
+    const bytes = new Uint8Array(buffer.data);
+    for (let i = 0; i < bytes.byteLength; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return `data:image/jpeg;base64,${window.btoa(binary)}`;
+  };
+
   if (loading) return <div className={styles.loading}>Loading...</div>;
   if (error) return <div className={styles.error}>Error: {error}</div>;
   if (!cart || cart.products.length === 0) return <div className={styles.empty}>Your Cart Is Empty 🛒</div>;
@@ -69,7 +80,9 @@ const UserCart = () => {
         {cart.products.map(item => (
           <div key={item.product._id} className={styles.cartItem}>
             <img
-              src={item.product.images && item.product.images.length > 0 ? item.product.images[0] : '/path/to/default/image.jpg'}
+              src={item.product.images && item.product.images.length > 0 
+                ? bufferToBase64(item.product.images[0]) 
+                : '/path/to/default/image.jpg'}
               alt={item.product.name}
               className={styles.productImage}
             />
